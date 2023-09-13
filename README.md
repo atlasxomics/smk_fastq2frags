@@ -1,1 +1,1 @@
-# Your workflow description here (useful if putting into version control system like git + GitHub or GitLab)
+Evalution of latch.bio's Snakemake [integration](https://docs.latch.bio/manual/snakemake.html)
