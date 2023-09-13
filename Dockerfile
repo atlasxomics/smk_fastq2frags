@@ -51,6 +51,7 @@ RUN apt-get install -y default-jdk
 
 # Copy workflow data (use .dockerignore to skip files)
 copy . /root/
+copy ./.latch/snakemake_jit_entrypoint.py /root/snakemake_jit_entrypoint.py
 
 # Latch workflow registration metadata
 # DO NOT CHANGE
