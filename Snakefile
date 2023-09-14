@@ -1,36 +1,21 @@
-"""Snakemake pipeline for converting raw fastq data to ATAC-seq fragments
-"""
+'''Snakemake pipeline for converting raw fastq data to ATAC-seq fragments
+'''
 
-from typing import List
-import fnmatch
 import os
 
-configfile: "config.yaml"
-
-def get_samples(fastq_dir: str) -> List[str]:
-  return [dir for dir in os.listdir(fastq_dir)]
-
-def get_r1_path(fastq_dir: str, sample: str) -> str:
-  r1 = fnmatch.filter(os.listdir(f'{fastq_dir}/{sample}'), f'*R1*.fastq.gz')[0]
-  return os.path.join(fastq_dir, sample, r1)
-
-def get_r2_path(fastq_dir: str, sample: str) -> str:
-  r2 = fnmatch.filter(os.listdir(f'{fastq_dir}/{sample}'), f'*R2*.fastq.gz')[0]
-  return os.path.join(fastq_dir, sample, r2)
-
-sample = get_samples(config["fastq_dir"])[0]
+REF_DIR = 'refdata'
 
 rule all:
   input:
-    expand('{sample}/outs', sample=get_samples(config["fastq_dir"]))
+    expand('{sample}/outs', sample=os.listdir('fastqs'))
 
 rule filter_L1:
   input:
-    in1 = get_r1_path(config["fastq_dir"], sample),
-    in2 = get_r2_path(config["fastq_dir"], sample)
+    in1 = 'fastqs/{sample}/{sample}_R1.fastq.gz',
+    in2 = 'fastqs/{sample}/{sample}_R2.fastq.gz'
   output:
-    out1 = f'{sample}_linker1_R1.fastq.gz',
-    out2 = f'{sample}_linker1_R2.fastq.gz'
+    out1 = '{sample}_linker1_R1.fastq.gz',
+    out2 = '{sample}_linker1_R2.fastq.gz'
   shell:
     '''
     bbmap/bbduk.sh \
@@ -44,18 +29,18 @@ rule filter_L1:
     restrictleft=103 \
     skipr1=t \
     hdist=3 \
-    stats={sample}_stats.linker1.txt \
+    stats=filter_stats.linker1.txt \
     threads=32 \
     literal=GTGGCCGATGTTTCGCATCGGCGTACGACT
     '''
 
 rule filter_L2:
   input:
-    in1 = f'{sample}_linker1_R1.fastq.gz',
-    in2 = f'{sample}_linker1_R2.fastq.gz'
+    in1 = '{sample}_linker1_R1.fastq.gz',
+    in2 = '{sample}_linker1_R2.fastq.gz'
   output:
-    out1 = f'{sample}_linker2_R1.fastq.gz',
-    out2 = f'{sample}_linker2_R2.fastq.gz'
+    out1 = '{sample}_linker2_R1.fastq.gz',
+    out2 = '{sample}_linker2_R2.fastq.gz'
   shell:
     '''
     bbmap/bbduk.sh \
@@ -69,17 +54,17 @@ rule filter_L2:
     restrictleft=65 \
     skipr1=t \
     hdist=3 \
-    stats={sample}_stats.linker2.txt \
+    stats=filter_stats.linker2.txt \
     threads=32 \
     literal=ATCCACGTGCTTGAGAGGCCAGAGCATTCG
     '''
 
 rule split_r2:
   input:
-    f'{sample}_linker2_R2.fastq.gz'
+    input = '{sample}_linker2_R2.fastq.gz'
   output:
-    out1 = f'{sample}_S1_L001_R3_001.fastq',
-    out2 = f'{sample}_S1_L001_R2_001.fastq'
+    out1 = '{sample}_S1_L001_R3_001.fastq',
+    out2 = '{sample}_S1_L001_R2_001.fastq'
   shell:
     '''
     python split_r2.py \
@@ -90,9 +75,9 @@ rule split_r2:
 
 rule R1_rename: 
   input:
-    f'{sample}_linker2_R1.fastq.gz'
+    input = '{sample}_linker2_R1.fastq.gz'
   output:
-    f'{sample}_S1_L001_R1_001.fastq.gz'
+    output = '{sample}_S1_L001_R1_001.fastq.gz'
   shell:
     '''
     cp {input} {output}
@@ -100,24 +85,24 @@ rule R1_rename:
 
 rule cell_ranger:
   input:
-    in1 = f'{sample}_S1_L001_R1_001.fastq.gz',
-    in2 = f'{sample}_S1_L001_R2_001.fastq',
-    in3 = f'{sample}_S1_L001_R3_001.fastq'
+    in1 = '{sample}_S1_L001_R1_001.fastq.gz',
+    in2 = '{sample}_S1_L001_R2_001.fastq',
+    in3 = '{sample}_S1_L001_R3_001.fastq'
   output:
-    directory(f'{sample}/outs')
+    directory('{sample}/outs')
   params:
-    ref_dir = config["ref_dir"]
+    ref_dir = REF_DIR
   run:
-    if not os.path.exists("cr_inputs"):
-      os.mkdir("cr_inputs")
+    if not os.path.exists('cr_inputs'):
+      os.mkdir('cr_inputs')
     shell('mv {input.in1} {input.in2} {input.in3} cr_inputs')
     shell(
-    "cellranger-atac-2.1.0/cellranger-atac count \
-    --id={sample} \
+    'cellranger-atac-2.1.0/cellranger-atac count \
+    --id={wildcards.sample} \
     --reference={params.ref_dir} \
     --fastqs=cr_inputs \
-    --sample={sample} \
+    --sample={wildcards.sample} \
     --localcores=25 \
     --localmem=64 \
-    --force-cells=2500"
+    --force-cells=2500'
     )
