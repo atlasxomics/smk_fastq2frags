@@ -9,3 +9,4 @@ Dockerfile
 .snakemake
 fastqs/sample1/*
 .latch/.logs
+cr_inputs

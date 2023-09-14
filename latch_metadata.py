@@ -15,12 +15,12 @@ SnakemakeMetadata(
         "r1": SnakemakeFileParameter(
 	    type=LatchFile,
             display_name="read 1",
-	    path=Path("fastqs/sample1/sample1_R1_001.fastq.gz")
+	    path=Path("fastqs/sample1/sample1_R1.fastq.gz")
         ),
         "r2": SnakemakeFileParameter(
 	    type=LatchFile,
             display_name="read 2",
-	    path=Path("fastqs/sample1/sample1_R2_001.fastq.gz")
+	    path=Path("fastqs/sample1/sample1_R2.fastq.gz")
         ),
         "refdata": SnakemakeFileParameter(
 	    type=LatchDir,

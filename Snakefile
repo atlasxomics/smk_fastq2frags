@@ -4,7 +4,6 @@
 from typing import List
 import fnmatch
 import os
-import pdb
 
 configfile: "config.yaml"
 
@@ -12,11 +11,11 @@ def get_samples(fastq_dir: str) -> List[str]:
   return [dir for dir in os.listdir(fastq_dir)]
 
 def get_r1_path(fastq_dir: str, sample: str) -> str:
-  r1 = fnmatch.filter(os.listdir(f'{fastq_dir}/{sample}'), f'*1*.fastq.gz')[0]
+  r1 = fnmatch.filter(os.listdir(f'{fastq_dir}/{sample}'), f'*R1*.fastq.gz')[0]
   return os.path.join(fastq_dir, sample, r1)
 
 def get_r2_path(fastq_dir: str, sample: str) -> str:
-  r2 = fnmatch.filter(os.listdir(f'{fastq_dir}/{sample}'), f'*2*.fastq.gz')[0]
+  r2 = fnmatch.filter(os.listdir(f'{fastq_dir}/{sample}'), f'*R2*.fastq.gz')[0]
   return os.path.join(fastq_dir, sample, r2)
 
 sample = get_samples(config["fastq_dir"])[0]
@@ -110,7 +109,7 @@ rule cell_ranger:
     ref_dir = config["ref_dir"]
   run:
     if not os.path.exists("cr_inputs"):
-      os.makedir("cr_inputs")
+      os.mkdir("cr_inputs")
     shell('mv {input.in1} {input.in2} {input.in3} cr_inputs')
     shell(
     "cellranger-atac-2.1.0/cellranger-atac count \

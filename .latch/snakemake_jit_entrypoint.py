@@ -72,9 +72,9 @@ def file_name_and_size(x: Path):
 def snakemake_snatac_jit_register_task(
     r1: LatchFile,
     r2: LatchFile,
-    species: LatchDir
+    refdata: LatchDir
 ) -> bool:
-    r1_dst_p = Path("fastqs/sample1/sample1_R1_001.fastq.gz")
+    r1_dst_p = Path("fastqs/sample1/sample1_R1.fastq.gz")
 
     print(f"Downloading r1: {r1.remote_path}")
     r1_p = Path(r1).resolve()
@@ -86,7 +86,7 @@ def snakemake_snatac_jit_register_task(
         r1_dst_p
     )
 
-    r2_dst_p = Path("fastqs/sample1/sample1_R2_001.fastq.gz")
+    r2_dst_p = Path("fastqs/sample1/sample1_R2.fastq.gz")
 
     print(f"Downloading r2: {r2.remote_path}")
     r2_p = Path(r2).resolve()
@@ -98,22 +98,22 @@ def snakemake_snatac_jit_register_task(
         r2_dst_p
     )
 
-    species_dst_p = Path("refdata-cellranger-arc-GRCh38-2020-A-2.0.0")
+    refdata_dst_p = Path("refdata")
 
-    print(f"Downloading species: {species.remote_path}")
-    species_p = Path(species).resolve()
-    print(f"  {file_name_and_size(species_p)}")
+    print(f"Downloading refdata: {refdata.remote_path}")
+    refdata_p = Path(refdata).resolve()
+    print(f"  {file_name_and_size(refdata_p)}")
 
-    for x in species_p.iterdir():
+    for x in refdata_p.iterdir():
         print(f"    {file_name_and_size(x)}")
 
-    print(f"Moving species to {species_dst_p}")
+    print(f"Moving refdata to {refdata_dst_p}")
     check_exists_and_rename(
-        species_p,
-        species_dst_p
+        refdata_p,
+        refdata_dst_p
     )
 
-    image_name = "13502_snakemake_snatac:0.0.6-d7f495"
+    image_name = "13502_snakemake_snatac:0.0.9-27bed5"
     image_base_name = image_name.split(":")[0]
     account_id = "13502"
     snakefile = Path("Snakefile")

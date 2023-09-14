@@ -6,3 +6,5 @@ cellranger-atac-2.1.0
 **/__pycache__
 .snakemake
 fastqs/sample1/*
+cr_inputs
+*fastq*

@@ -1,1 +1,2 @@
 Evalution of latch.bio's Snakemake [integration](https://docs.latch.bio/manual/snakemake.html)
+for the ATX ATAC-seq fastq2frags pipeline (snaTAC).  For the original Snakemake pipeline and documentation see [ATX_ATAC-seq](https://github.com/atlasxomics/ATX_ATAC-seq/tree/main); for the Latch SDK implementation, see [spatial-atacseq_latch](https://github.com/atlasxomics/spatial-atacseq_latch).
