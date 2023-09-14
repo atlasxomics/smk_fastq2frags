@@ -53,9 +53,11 @@ RUN curl -L https://sourceforge.net/projects/bbmap/files/BBMap_39.01.tar.gz/down
     tar -xvzf BBMap_39.01.tar.gz && \
     rm BBMap_39.01.tar.gz
 
-RUN curl -o cellranger-atac-2.1.0.tar.gz "https://cf.10xgenomics.com/releases/cell-atac/cellranger-atac-2.1.0.tar.gz?Expires=1694703184&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9jZi4xMHhnZW5vbWljcy5jb20vcmVsZWFzZXMvY2VsbC1hdGFjL2NlbGxyYW5nZXItYXRhYy0yLjEuMC50YXIuZ3oiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2OTQ3MDMxODR9fX1dfQ__&Signature=B5e2MLf47bGFva-xc9VmSNuWwyJNkzqINm5xb68mfFOvhS8pC9sGPRhZ37Cq3Bb0bq8ckGIyQJSKfpQJXliAdEmbEqmXoNiKEVhFdHCO5QRtisfUxgCzosf35~oDMNucYi32vQjTVL0ecWv9h8ujv0mGWP2wJnzD8ZFSCuTNPQOiJwnlByQf1IHE8wXk8zyp3WRZLVGM0NNOAD07XwUMKqs5YOGB~MhmyG9S~Eq66DOkLWpb~xhH1eV5lhAIRSAesU0lGVRkQjV9CudR2--5DPheGWjDTiFJ3RqmlnzOqUcT~1swwTopqgGb2ouu1tcFTh-39W1M6Qgz-sSUQgdq0Q__&Key-Pair-Id=APKAI7S6A5RYOXBWRPDA" && \ 
+# cellranger
+RUN curl -o cellranger-atac-2.1.0.tar.gz "https://cf.10xgenomics.com/releases/cell-atac/cellranger-atac-2.1.0.tar.gz?Expires=1694756765&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9jZi4xMHhnZW5vbWljcy5jb20vcmVsZWFzZXMvY2VsbC1hdGFjL2NlbGxyYW5nZXItYXRhYy0yLjEuMC50YXIuZ3oiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2OTQ3NTY3NjV9fX1dfQ__&Signature=fDlvn4Af9oO~dgGAdza~U32SWQkqqz6ehCQjDPmsZcmVAWNo~YK1Jva7f6Kn8UzhDJfL6Mt4Kj8HAQS4gnZBhEaKhGvA0onrx8MElz-EAP6Rj0deM2dqzAyJ1DdNlpcg2AXjxiILCpnqB5YBxg2Qlqnu5-k4nIVN8U2Mf8FmXqSmCz5~mNP5reIg-J02ep4wdCWW5g3Gvx48Ao-cW15fCsdcn9ENf~DH8XQjRFL~PkzuzUECpXBRfbxHdW~PyC6UMKnz1tSrp0k~BahMKeW9rloWFGAHxPSYF4dtYHPKBlSxuGKxeQ5IExkKgtPTey~OgZ7x8-B6qZa0m3hq4CKq-Q__&Key-Pair-Id=APKAI7S6A5RYOXBWRPDA" && \ 
     tar -xzvf cellranger-atac-2.1.0.tar.gz && \
     rm cellranger-atac-2.1.0.tar.gz
+COPY ./bc50.txt.gz /root/cellranger-atac-2.1.0/lib/python/atac/barcodes/737K-cratac-v1.txt.gz
 
 # Copy workflow data (use .dockerignore to skip files)
 copy . /root/

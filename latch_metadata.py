@@ -9,7 +9,7 @@ SnakemakeMetadata(
     author=LatchAuthor(
         name="AtlasXomics, Inc.",
         email="jamesm@atlasxomics.com",
-        github="github.com/atlasxomics",
+        github="github.com/jpmcga",
     ),
     parameters={
         "r1": SnakemakeFileParameter(
