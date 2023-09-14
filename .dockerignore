@@ -6,3 +6,6 @@ Dockerfile
 .git
 **/__pycache__
 .latch_report.tar.gz
+.snakemake
+fastqs/sample1/*
+.latch/.logs
