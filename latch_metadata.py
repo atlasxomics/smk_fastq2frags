@@ -22,13 +22,10 @@ SnakemakeMetadata(
             display_name="read 2",
 	    path=Path("fastqs/sample1/sample1_R2_001.fastq.gz")
         ),
-        "species": SnakemakeFileParameter(
+        "refdata": SnakemakeFileParameter(
 	    type=LatchDir,
-        display_name="species",
-	    path=Path("refdata-cellranger-arc-GRCh38-2020-A-2.0.0")
+        display_name="reference directory",
+	    path=Path("refdata")
         )
     }
 )
-
-
-
