@@ -21,11 +21,6 @@ SnakemakeMetadata(
 	    type=LatchFile,
             display_name="read 2",
 	    path=Path("fastqs/sample1/sample1_R2.fastq.gz")
-        ),
-        "refdata": SnakemakeFileParameter(
-	    type=LatchDir,
-        display_name="reference directory",
-	    path=Path("refdata")
         )
     }
 )

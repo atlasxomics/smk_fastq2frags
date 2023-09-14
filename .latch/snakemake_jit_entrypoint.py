@@ -71,8 +71,7 @@ def file_name_and_size(x: Path):
 @small_task
 def snakemake_snatac_jit_register_task(
     r1: LatchFile,
-    r2: LatchFile,
-    refdata: LatchDir
+    r2: LatchFile
 ) -> bool:
     r1_dst_p = Path("fastqs/sample1/sample1_R1.fastq.gz")
 
@@ -98,22 +97,7 @@ def snakemake_snatac_jit_register_task(
         r2_dst_p
     )
 
-    refdata_dst_p = Path("refdata")
-
-    print(f"Downloading refdata: {refdata.remote_path}")
-    refdata_p = Path(refdata).resolve()
-    print(f"  {file_name_and_size(refdata_p)}")
-
-    for x in refdata_p.iterdir():
-        print(f"    {file_name_and_size(x)}")
-
-    print(f"Moving refdata to {refdata_dst_p}")
-    check_exists_and_rename(
-        refdata_p,
-        refdata_dst_p
-    )
-
-    image_name = "13502_snakemake_snatac:0.0.11-911ad6"
+    image_name = "13502_snakemake_snatac:0.0.13-3306f4"
     image_base_name = image_name.split(":")[0]
     account_id = "13502"
     snakefile = Path("Snakefile")

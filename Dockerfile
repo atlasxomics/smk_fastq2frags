@@ -62,6 +62,7 @@ COPY ./bc50.txt.gz /root/cellranger-atac-2.1.0/lib/python/atac/barcodes/737K-cra
 # Copy workflow data (use .dockerignore to skip files)
 copy . /root/
 copy ./.latch/snakemake_jit_entrypoint.py /root/snakemake_jit_entrypoint.py
+copy ./.latch/token /root/.latch/token
 
 # Latch workflow registration metadata
 # DO NOT CHANGE

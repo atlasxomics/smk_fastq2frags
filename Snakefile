@@ -3,8 +3,6 @@
 
 import os
 
-REF_DIR = 'refdata'
-
 rule all:
   input:
     expand('{sample}/outs', sample=os.listdir('fastqs'))
@@ -90,16 +88,19 @@ rule cell_ranger:
     in3 = '{sample}_S1_L001_R3_001.fastq'
   output:
     directory('{sample}/outs')
-  params:
-    ref_dir = REF_DIR
   run:
     if not os.path.exists('cr_inputs'):
       os.mkdir('cr_inputs')
     shell('mv {input.in1} {input.in2} {input.in3} cr_inputs')
     shell(
+      'latch cp \
+      latch://13502.account/STAR_ref_index/refdata-cellranger-arc-GRCh38-2020-A-2.0.0 \
+      ./refdata'
+    )
+    shell(
     'cellranger-atac-2.1.0/cellranger-atac count \
     --id={wildcards.sample} \
-    --reference={params.ref_dir} \
+    --reference=refdata \
     --fastqs=cr_inputs \
     --sample={wildcards.sample} \
     --localcores=25 \
