@@ -88,6 +88,10 @@ rule cell_ranger:
     in3 = '{sample}_S1_L001_R3_001.fastq'
   output:
     directory('{sample}/outs')
+  threads: 96
+  resources:
+    mem_gb=192
+    disk_gb=500
   run:
     if not os.path.exists('cr_inputs'):
       os.mkdir('cr_inputs')
