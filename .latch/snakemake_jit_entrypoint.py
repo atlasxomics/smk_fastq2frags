@@ -97,7 +97,7 @@ def snakemake_snatac_jit_register_task(
         r2_dst_p
     )
 
-    image_name = "13502_snakemake_snatac:0.0.13-e6123d"
+    image_name = "13502_snakemake_snatac:0.0.15-3dfa38"
     image_base_name = image_name.split(":")[0]
     account_id = "13502"
     snakefile = Path("Snakefile")

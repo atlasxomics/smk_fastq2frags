@@ -90,8 +90,8 @@ rule cell_ranger:
     directory('{sample}/outs')
   threads: 96
   resources:
-    mem_gb=192
-    disk_gb=500
+    mem_gb=384,
+    disk_gb=1000
   run:
     if not os.path.exists('cr_inputs'):
       os.mkdir('cr_inputs')
