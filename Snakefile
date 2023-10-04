@@ -2,10 +2,19 @@
 '''
 
 import os
+import re
+
+with open("reference.txt") as f:
+  REF_PATH =  f.readline().rstrip()
+
+try:
+  GENOME = re.search("GRC.*[0-9]{2}", REF_PATH).group()
+except AttributeError:
+  raise Exception("Genome name (GRC..XX) not found in pointer file.")
 
 rule all:
   input:
-    expand('{sample}/outs', sample=os.listdir('fastqs'))
+    expand('{sample}_fragments.tsv.gz', sample=os.listdir('fastqs'))
 
 rule filter_L1:
   input:
@@ -57,57 +66,47 @@ rule filter_L2:
     literal=ATCCACGTGCTTGAGAGGCCAGAGCATTCG
     '''
 
-rule split_r2:
+rule chromap:
   input:
-    input = '{sample}_linker2_R2.fastq.gz'
+    in1 = '{sample}_linker2_R1.fastq.gz',
+    in2 = '{sample}_linker2_R2.fastq.gz'
   output:
-    out1 = '{sample}_S1_L001_R3_001.fastq',
-    out2 = '{sample}_S1_L001_R2_001.fastq'
-  shell:
-    '''
-    python split_r2.py \
-    --input {input} \
-    --output_R3 {output.out1} \
-    --output_R2 {output.out2}
-    '''
-
-rule R1_rename: 
-  input:
-    input = '{sample}_linker2_R1.fastq.gz'
-  output:
-    output = '{sample}_S1_L001_R1_001.fastq.gz'
-  shell:
-    '''
-    cp {input} {output}
-    '''
-
-rule cell_ranger:
-  input:
-    in1 = '{sample}_S1_L001_R1_001.fastq.gz',
-    in2 = '{sample}_S1_L001_R2_001.fastq',
-    in3 = '{sample}_S1_L001_R3_001.fastq'
-  output:
-    directory('{sample}/outs')
+    '{sample}_aln.bed'
   threads: 96
   resources:
-    mem_mb=384000,
-    disk_mb=1000000
+    mem_mb=192000,
+    disk_mb=50000
+  params:
+    ref_path = REF_PATH,
+    genome = GENOME
   run:
-    if not os.path.exists('cr_inputs'):
-      os.mkdir('cr_inputs')
-    shell('mv {input.in1} {input.in2} {input.in3} cr_inputs')
     shell(
-      'latch cp \
-      latch://13502.account/STAR_ref_index/refdata-cellranger-arc-GRCh38-2020-A-2.0.0 \
+      f'latch cp \
+      {params.ref_path} \
       ./refdata'
     )
     shell(
-    'cellranger-atac-2.1.0/cellranger-atac count \
-    --id={wildcards.sample} \
-    --reference=refdata \
-    --fastqs=cr_inputs \
-    --sample={wildcards.sample} \
-    --localcores=25 \
-    --localmem=64 \
-    --force-cells=2500'
+      'chromap/chromap \
+        -t 96 \
+        --preset atac \
+        -x refdata/{params.genome}_genome.index \
+        -r refdata/{params.genome}_genome.fa \
+        -1 {input.in1} \
+        -2 {input.in2} \
+        -o {wildcards.sample}_aln.bed \
+        -b {input.in2} \
+        --barcode-whitelist barcodes.txt \
+        --read-format bc:22:29,bc:60:67,r1:0:-1,r2:117:-1'
     )
+
+rule bed2fragment:
+  input:
+    '{sample}_aln.bed'
+  output:
+    '{sample}_fragments.tsv.gz'
+  shell:
+    '''	
+    awk 'BEGIN{{FS=OFS=" "}}{{$4=$4"-1"}}4' {input} > {wildcards.sample}_temp.bed
+    sed 's/ /\t/g' {wildcards.sample}_temp.bed > {wildcards.sample}_fragments.tsv
+    bgzip -c {wildcards.sample}_fragments.tsv > {output}
+    '''

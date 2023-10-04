@@ -53,11 +53,14 @@ RUN curl -L https://sourceforge.net/projects/bbmap/files/BBMap_39.01.tar.gz/down
     tar -xvzf BBMap_39.01.tar.gz && \
     rm BBMap_39.01.tar.gz
 
-# cellranger
-RUN curl -o cellranger-atac-2.1.0.tar.gz "https://cf.10xgenomics.com/releases/cell-atac/cellranger-atac-2.1.0.tar.gz?Expires=1694756765&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9jZi4xMHhnZW5vbWljcy5jb20vcmVsZWFzZXMvY2VsbC1hdGFjL2NlbGxyYW5nZXItYXRhYy0yLjEuMC50YXIuZ3oiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2OTQ3NTY3NjV9fX1dfQ__&Signature=fDlvn4Af9oO~dgGAdza~U32SWQkqqz6ehCQjDPmsZcmVAWNo~YK1Jva7f6Kn8UzhDJfL6Mt4Kj8HAQS4gnZBhEaKhGvA0onrx8MElz-EAP6Rj0deM2dqzAyJ1DdNlpcg2AXjxiILCpnqB5YBxg2Qlqnu5-k4nIVN8U2Mf8FmXqSmCz5~mNP5reIg-J02ep4wdCWW5g3Gvx48Ao-cW15fCsdcn9ENf~DH8XQjRFL~PkzuzUECpXBRfbxHdW~PyC6UMKnz1tSrp0k~BahMKeW9rloWFGAHxPSYF4dtYHPKBlSxuGKxeQ5IExkKgtPTey~OgZ7x8-B6qZa0m3hq4CKq-Q__&Key-Pair-Id=APKAI7S6A5RYOXBWRPDA" && \ 
-    tar -xzvf cellranger-atac-2.1.0.tar.gz && \
-    rm cellranger-atac-2.1.0.tar.gz
-COPY ./bc50.txt.gz /root/cellranger-atac-2.1.0/lib/python/atac/barcodes/737K-cratac-v1.txt.gz
+# chromap
+RUN apt-get install -y vim wget git libz-dev unzip tabix gdebi-core aptitude libjpeg-dev
+RUN wget https://github.com/haowenz/chromap/archive/refs/heads/li_dev4.zip && \
+    unzip li_dev4.zip && \
+    mv /root/chromap-li_dev4 /root/chromap && \
+    cd /root/chromap && \
+    make && \
+    cd /root 
 
 # Copy workflow data (use .dockerignore to skip files)
 copy . /root/
