@@ -57,7 +57,7 @@ RUN curl -L https://sourceforge.net/projects/bbmap/files/BBMap_39.01.tar.gz/down
 RUN apt-get install -y vim wget git libz-dev unzip tabix gdebi-core aptitude libjpeg-dev
 RUN wget https://github.com/haowenz/chromap/archive/refs/heads/li_dev4.zip && \
     unzip li_dev4.zip && \
-    mv /root/chromap-li_dev4 /root/chromap && \
+    mv chromap-li_dev4 /root/chromap && \
     cd /root/chromap && \
     make && \
     cd /root 

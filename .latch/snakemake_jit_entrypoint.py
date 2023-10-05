@@ -71,7 +71,9 @@ def file_name_and_size(x: Path):
 @small_task
 def snakemake_snatac_jit_register_task(
     r1: LatchFile,
-    r2: LatchFile
+    r2: LatchFile,
+    reference_genome_pointer: LatchFile,
+    barcode_file: LatchFile
 ) -> bool:
     r1_dst_p = Path("fastqs/sample1/sample1_R1.fastq.gz")
 
@@ -97,7 +99,31 @@ def snakemake_snatac_jit_register_task(
         r2_dst_p
     )
 
-    image_name = "13502_snakemake_snatac:0.0.16-c031c5"
+    reference_genome_pointer_dst_p = Path("reference.txt")
+
+    print(f"Downloading reference_genome_pointer: {reference_genome_pointer.remote_path}")
+    reference_genome_pointer_p = Path(reference_genome_pointer).resolve()
+    print(f"  {file_name_and_size(reference_genome_pointer_p)}")
+
+    print(f"Moving reference_genome_pointer to {reference_genome_pointer_dst_p}")
+    check_exists_and_rename(
+        reference_genome_pointer_p,
+        reference_genome_pointer_dst_p
+    )
+
+    barcode_file_dst_p = Path("barcodes.txt")
+
+    print(f"Downloading barcode_file: {barcode_file.remote_path}")
+    barcode_file_p = Path(barcode_file).resolve()
+    print(f"  {file_name_and_size(barcode_file_p)}")
+
+    print(f"Moving barcode_file to {barcode_file_dst_p}")
+    check_exists_and_rename(
+        barcode_file_p,
+        barcode_file_dst_p
+    )
+
+    image_name = "13502_snakemake_snatac:0.0.20-dd70b6"
     image_base_name = image_name.split(":")[0]
     account_id = "13502"
     snakefile = Path("Snakefile")

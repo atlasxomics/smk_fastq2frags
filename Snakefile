@@ -4,13 +4,6 @@
 import os
 import re
 
-with open("reference.txt") as f:
-  REF_PATH =  f.readline().rstrip()
-
-try:
-  GENOME = re.search("GRC.*[0-9]{2}", REF_PATH).group()
-except AttributeError:
-  raise Exception("Genome name (GRC..XX) not found in pointer file.")
 
 rule all:
   input:
@@ -18,11 +11,11 @@ rule all:
 
 rule filter_L1:
   input:
-    in1 = 'fastqs/{sample}/{sample}_R1.fastq.gz',
-    in2 = 'fastqs/{sample}/{sample}_R2.fastq.gz'
+    in1='fastqs/{sample}/{sample}_R1.fastq.gz',
+    in2='fastqs/{sample}/{sample}_R2.fastq.gz'
   output:
-    out1 = '{sample}_linker1_R1.fastq.gz',
-    out2 = '{sample}_linker1_R2.fastq.gz'
+    out1='{sample}_linker1_R1.fastq.gz',
+    out2='{sample}_linker1_R2.fastq.gz'
   shell:
     '''
     bbmap/bbduk.sh \
@@ -43,11 +36,11 @@ rule filter_L1:
 
 rule filter_L2:
   input:
-    in1 = '{sample}_linker1_R1.fastq.gz',
-    in2 = '{sample}_linker1_R2.fastq.gz'
+    in1='{sample}_linker1_R1.fastq.gz',
+    in2='{sample}_linker1_R2.fastq.gz'
   output:
-    out1 = '{sample}_linker2_R1.fastq.gz',
-    out2 = '{sample}_linker2_R2.fastq.gz'
+    out1='{sample}_linker2_R1.fastq.gz',
+    out2='{sample}_linker2_R2.fastq.gz'
   shell:
     '''
     bbmap/bbduk.sh \
@@ -68,34 +61,35 @@ rule filter_L2:
 
 rule chromap:
   input:
-    in1 = '{sample}_linker2_R1.fastq.gz',
-    in2 = '{sample}_linker2_R2.fastq.gz'
+    in1='{sample}_linker2_R1.fastq.gz',
+    in2='{sample}_linker2_R2.fastq.gz',
+    in3='reference.txt',
+    in4='barcodes.txt'
   output:
     '{sample}_aln.bed'
-  threads: 96
+  threads: 32
   resources:
-    mem_mb=192000,
-    disk_mb=50000
-  params:
-    ref_path = REF_PATH,
-    genome = GENOME
+    mem_mb=128000,
+    disk_mb=2000000
   run:
-    shell(
-      f'latch cp \
-      {params.ref_path} \
-      ./refdata'
-    )
+    with open('reference.txt') as f:
+      ref_path = f.readline().rstrip()
+    try:
+      genome = re.search('GRC.*[0-9]{2}', ref_path).group()
+    except AttributeError:
+      raise Exception('Genome name (GRC..XX) not found in pointer file.')
+    shell(f'latch cp {ref_path} ./refdata')
     shell(
       'chromap/chromap \
-        -t 96 \
+        -t 32 \
         --preset atac \
-        -x refdata/{params.genome}_genome.index \
-        -r refdata/{params.genome}_genome.fa \
+        -x refdata/{genome}_genome.index \
+        -r refdata/{genome}_genome.fa \
         -1 {input.in1} \
         -2 {input.in2} \
         -o {wildcards.sample}_aln.bed \
         -b {input.in2} \
-        --barcode-whitelist barcodes.txt \
+        --barcode-whitelist {input.in4} \
         --read-format bc:22:29,bc:60:67,r1:0:-1,r2:117:-1'
     )
 
