@@ -46,9 +46,10 @@ run mamba env create \
     --name snakemake
 env PATH=/opt/conda/envs/snakemake/bin:$PATH
 
-# install jdk, bbmap
+# bbmap
 RUN apt-get install -y default-jdk
-RUN curl -L https://sourceforge.net/projects/bbmap/files/BBMap_39.01.tar.gz/download -o \
+RUN cd /root/ && \
+    curl -L https://sourceforge.net/projects/bbmap/files/BBMap_39.01.tar.gz/download -o \
     BBMap_39.01.tar.gz && \
     tar -xvzf BBMap_39.01.tar.gz && \
     rm BBMap_39.01.tar.gz

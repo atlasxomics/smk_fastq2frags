@@ -123,7 +123,7 @@ def snakemake_snatac_jit_register_task(
         barcode_file_dst_p
     )
 
-    image_name = "13502_snakemake_snatac:0.0.20-dd70b6"
+    image_name = "13502_snakemake_snatac:0.0.23-9871f7"
     image_base_name = image_name.split(":")[0]
     account_id = "13502"
     snakefile = Path("Snakefile")
